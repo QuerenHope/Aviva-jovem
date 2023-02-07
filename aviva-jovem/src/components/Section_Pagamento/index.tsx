@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { TagSection } from './style'
 import { useForm } from "react-hook-form";
+import axios from 'axios'
 
 export interface IRegisterForm {
   username: string;
@@ -14,13 +15,31 @@ export interface IRegisterForm {
   dataDeChegada:string;
 }
 
+
+
 const SectionPay = () => {
+
 
   const {register, handleSubmit} = useForm<IRegisterForm>();
 
-  const onRegister = (data: IRegisterForm) => {
-    console.log(data);
-  };
+  const [userdata, setuserdata] = useState([])
+
+  const onRegister = async (data: IRegisterForm) =>  {
+
+      axios({
+        method: 'post',
+        url: 'https://v1.nocodeapi.com/querenhope/google_sheets/WtCfskLDjUDEAwxX?tabId', 
+        params: {},
+        data: [[data.username, data.cpf, data.cidade,data.uf , data.dtnasc, data.fone, data.pastor]]
+    }).then(function (response) {
+            // handle success
+            console.log(response.data);
+    }).catch(function (error) {
+            // handle error
+            console.log(error);
+    })
+  }
+  
 
   return (
     <div style={{display:'flex',flexDirection:'column', alignItems:'center', background: 'var(--color-roxo)' }}>
@@ -36,7 +55,7 @@ const SectionPay = () => {
           </label>
 
           <label htmlFor="">Data de nascimento
-            <input type='date' id='dtnasc' {...register("dtnasc")}/>
+            <input type='text' id='dtnasc' {...register("dtnasc")}/>
           </label>
 
           <label htmlFor="">CPF
@@ -58,9 +77,6 @@ const SectionPay = () => {
               <input type="text" {...register("pastor")} />
             </label>
 
-            <label htmlFor="">Data prevista de Chegada
-              <input type="time" id="hora-desejada" required  {...register("dataDeChegada")}/>
-            </label>
           </div>
           <button type='submit'>Enviar</button>
         </form>
